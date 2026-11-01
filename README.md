@@ -1,19 +1,124 @@
 <div align="center">
   <img src="./community-resources/resources/rebased.svg" width="100" height="100" />  
   <h1>Rebased</h1>
-  <p>A git client based on the IntelliJ platform.</p>
+  <p>A Git client based on the IntelliJ Platform, with Python code navigation in this fork.</p>
 </div>
 
 ![](screenshot.png)
 
+## This fork: Python code navigation
+
+This fork builds on [DetachHead/rebased](https://github.com/DetachHead/rebased).
+It adds Python declaration navigation to help you understand code while you review Git changes.
+You can follow a function call to its definition from a source file or a workspace diff.
+The first version focuses on Python and has been checked on Windows x64.
+
+The feature uses the PythonCore plugin from the same IntelliJ Platform revision as Rebased.
+It resolves references through the platform's Python analysis and navigation.
+Rebased still provides the Git log, change review, staging, and commit interface.
+
+> [!IMPORTANT]
+> Build this fork to use Python navigation. The installation links below point to upstream Rebased releases.
+> Those upstream downloads do not include this feature.
+> The Windows ZIP has been built and checked locally. This fork has not published that preview to GitHub Releases.
+
+### What we added
+
+| Area | Change in this fork | What you can do |
+| --- | --- | --- |
+| Python support | Bundle PythonCore and its required plugins. | Resolve Python declarations through the platform's Python analysis. |
+| Source editors | Enable Python navigation with a configured interpreter and project indexes. | Follow local functions, imported aliases, methods, and standard library calls. |
+| Unified diffs | Map a diff position to the actual workspace file before navigation. | Follow a call from a supported context line or added line in a unified diff. |
+| Project setup | Restore Python SDK configuration and the source root action. | Select a virtual environment and mark `src/` as a source root. |
+| Windows environments | Use a batch activation script with the environment reader that runs `cmd.exe`. | Update the interpreter environment without opening a PowerShell script in an editor. |
+| Product integration | Restore required Facet services and module initialization. Handle the absent plugin advertiser service. | Keep interpreter setup, package updates, and project reopening working in Rebased. |
+
+The unified diff adapter checks the file, text, and line mapping before it navigates.
+It rejects historical content and stale mappings instead of treating them as current source code.
+The development launcher also supports the standalone community checkout root.
+
+### Quick start on Windows
+
+1. Build this fork with the command below and extract `rebased.win.zip`.
+2. Start `bin/rebased64.exe`. This GUI launcher does not create a console window.
+   The separate `bin/rebased.exe` launcher uses the Windows console subsystem.
+3. Open your Python project.
+4. Open **Settings > Build, Execution, Deployment > Python Interpreter**.
+   Select **Add Interpreter > Add Local Interpreter** and choose an existing Python interpreter.
+   You can use the interpreter from the project's virtual environment.
+5. If the project has a `src/` layout, right-click `src` in the Project view.
+   Select **Mark Directory As > Sources Root**.
+6. Keep **Enable indexing files for search** enabled in **Settings > Appearance and Behavior > System Settings**.
+   Wait for indexing and the interpreter update to finish.
+7. Put the caret on a call and press **Ctrl+B** to go to its declaration.
+   Press **Ctrl+Alt+Left** to return with the default Windows keymap.
+
+For example, when `helpers.py` defines `greet`, you can navigate through an imported alias:
+
+```python
+# app.py
+from helpers import greet as welcome
+
+message = welcome("Ada")  # Put the caret on welcome and press Ctrl+B.
+```
+
+The same call can be followed from the current file side of a side-by-side diff.
+In a unified diff, the adapter first locates the call in the workspace file, then invokes Python navigation.
+
+### What we verified
+
+The Windows x64 preview passed **195 automated tests**, with no failures or skipped tests.
+These tests cover Python navigation, cross-file resolution, relative imports, diff mapping, environment activation, and Facet behavior.
+The detailed test counts are in [Python navigation](PYTHON_NAVIGATION.md#validation).
+
+Manual checks covered local functions, imported aliases, instance methods, standard library calls, and imports from `src/`.
+They also covered unified and side-by-side diffs, external file updates, and navigation back.
+The final Windows ZIP was started with an empty index directory.
+Interpreter and source root settings survived reopening, and navigation worked after indexing.
+The runtime log had no SEVERE or ERROR entries after these checks.
+
+### Current limits
+
+- This first version focuses on Python. Other languages have not been validated for declaration navigation.
+- Python navigation depends on static analysis. Dynamic imports and runtime changes can prevent a unique result.
+- Unified diff navigation requires a matching workspace file. Historical revision navigation is outside this version's scope.
+- Returning after a jump from a unified diff opens the call in the source editor, rather than the diff tab.
+- Manual shortcut checks covered **Ctrl+B**. The action registers platform mouse shortcuts, but **Ctrl+click** was not checked separately.
+- Linux, macOS, and performance changes have not been tested for this feature.
+
+### Build the Windows preview
+
+Check the repository's [build requirements](CONTRIBUTING.md#building-rebased), then clone this fork:
+
+```powershell
+git clone --depth 1 https://github.com/zhoudeqiang9527/rebased.git
+cd rebased
+```
+
+Run this command in PowerShell from the repository root:
+
+```powershell
+.\installers.cmd --% -Dintellij.build.target.os=current -Dintellij.build.target.arch=current -Dintellij.build.skip.build.steps=maven_artifacts,windows_exe_installer
+```
+
+On Windows x64, the output is `out/idea-ce/artifacts/rebased.win.zip`.
+The ZIP includes JBR. You need an existing Python interpreter for your Python project.
+This command skips Maven artifacts and the EXE installer.
+
+See [Python navigation](PYTHON_NAVIGATION.md) for more implementation details and validation limits.
+
 ## Motivation
 
 Rebased is an open-source remake of the short-lived [jetbrains git client](https://youtrack.jetbrains.com/issue/IJPL-72504/Make-git-client-a-standalone-app#focus=Comments-27-12868395.0-0).
-It's basically just a JetBrains IDE with all the bundled plugins removed except the git integration, with some additional UI tweaks.
+Upstream Rebased removes most bundled IDE plugins and keeps the Git integration, with additional UI tweaks.
+This fork adds PythonCore and the platform services needed for Python navigation.
 
 See [this youtrack issue](https://youtrack.jetbrains.com/issue/IJPL-72504/Make-git-client-a-standalone-app) for the many reasons people have been requesting this for almost a decade. At the time of writing, it's the #3 most upvoted open issue on YouTrack.
 
 ## Installation
+
+The links and package commands in this section install **upstream Rebased**.
+For this fork's Python feature, follow [Build the Windows preview](#build-the-windows-preview) above.
 
 ### Linux
 
@@ -71,13 +176,7 @@ Alternatively you can download the `.dmg` manually:
 |Apple Silicon (aarch64)|[Download](https://github.com/DetachHead/rebased/releases/latest/download/rebased-aarch64.dmg)|
 |Intel (x86_64)|[Download](https://github.com/DetachHead/rebased/releases/latest/download/rebased.dmg)|
 
-## Python navigation in this fork
-
-This fork adds Python declaration navigation in source editors and workspace diffs.
-See [Python navigation](PYTHON_NAVIGATION.md) for setup, build steps, validation, and limits.
-Build this fork to use the feature. The upstream downloads above do not include it.
-
-## Exclusive Features
+## Features inherited from upstream
 
 In addition to all the git-related features from [IntelliJ IDEA Community Edition](https://github.com/jetbrains/intellij-community), Rebased has some additional features which aren't available in any of the official JetBrains IDEs.
 
@@ -105,6 +204,8 @@ To address this problem, Rebased allows you to disable the creation of the `.ide
 
 ### Option to disable indexing
 
+Keep indexing enabled to use this fork's Python navigation.
+
 In order for the search feature to work reliably, JetBrains IDEs will scan and index all the files in your project. You can disable the indexing if you don't need to search your project with Rebased, if for example you use a separate IDE that has its own search functionality:
 
 1. Go to *Settings > Appearance and Behavior > System Settings*
@@ -128,6 +229,9 @@ One of the goals of Rebased is to prevent users from having to install bloated p
 ## Plugins
 
 ### Compatibility disclaimer
+
+This fork bundles PythonCore and restores the platform services required for the Python scenarios described above.
+The remaining notes describe upstream Rebased's plugin policy and the limits of other marketplace plugins.
 
 While installing plugins from the marketplace is supported, note that many of the core components otherwise present in every JetBrains IDE are disabled in Rebased. This means some plugins may not work properly (or at all) if they depend on such components.
 
