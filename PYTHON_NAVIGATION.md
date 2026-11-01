@@ -1,8 +1,9 @@
-# Python navigation preview
+# Python navigation
 
 This fork bundles PythonCore from the same IntelliJ Platform revision as Rebased.
 It supports Python declaration navigation in source editors and workspace diffs.
-Build this fork to use the feature. Upstream release downloads do not include this change.
+Download this fork's [Windows release](https://github.com/zhoudeqiang9527/rebased/releases/tag/v1.0.0) to use the feature.
+Upstream release downloads do not include this change.
 
 ## Setup
 

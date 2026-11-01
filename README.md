@@ -11,7 +11,7 @@
 This fork builds on [DetachHead/rebased](https://github.com/DetachHead/rebased).
 It adds Python, JavaScript, and TypeScript declaration navigation to help you understand code while you review Git changes.
 You can follow a function call to its definition from a source file or a workspace diff.
-The preview targets Windows x64.
+Version 1.0.0 targets Windows x64.
 
 The feature uses the PythonCore plugin from the same IntelliJ Platform revision as Rebased.
 It resolves references through the platform's Python analysis and navigation.
@@ -20,9 +20,18 @@ Java support is not included.
 Rebased still provides the Git log, change review, staging, and commit interface.
 
 > [!IMPORTANT]
-> Build this fork to use code navigation. The installation links below point to upstream Rebased releases.
-> Those upstream downloads do not include this feature.
-> The Windows ZIP has been built and checked locally. This fork has not published that preview to GitHub Releases.
+> Download this fork's Windows package to use code navigation.
+> The upstream installation links below do not include this fork's features.
+
+### Download version 1.0.0
+
+- [Windows x64 ZIP](https://github.com/zhoudeqiang9527/rebased/releases/download/v1.0.0/rebased-1.0.0-windows-x64.zip)
+- [SHA-256 checksum](https://github.com/zhoudeqiang9527/rebased/releases/download/v1.0.0/rebased-1.0.0-windows-x64.zip.sha256)
+- [Release notes](RELEASE_NOTES.md)
+
+Extract the complete ZIP into a writable directory. Start `bin/rebased64.exe`.
+Keep the runtime, library, and plugin directories beside the executable. No separate Java installation is required.
+Use an existing Python interpreter for Python navigation. Install Node.js 22.22.2 or later for JavaScript and TypeScript navigation.
 
 ### What we added
 
@@ -69,7 +78,7 @@ The background fallback selects the first matching file. It does not build a lis
 
 ### JavaScript and TypeScript quick start
 
-1. Build this fork and extract the Windows ZIP. Start `bin/rebased64.exe`.
+1. Download the Windows ZIP above and extract it. Start `bin/rebased64.exe`.
 2. Install Node.js **22.22.2 or later** and put it on PATH. Node.js 24 also works.
 3. Open your repository and a source file or workspace diff.
    Supported extensions are `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.mts`, `.cjs`, and `.cts`.
@@ -85,7 +94,7 @@ See [JavaScript and TypeScript navigation](JAVASCRIPT_NAVIGATION.md) for the sup
 
 ### Python quick start on Windows
 
-1. Build this fork with the command below and extract `rebased.win.zip`.
+1. Download the Windows ZIP above and extract it.
 2. Start `bin/rebased64.exe`. This GUI launcher does not create a console window.
    The separate `bin/rebased.exe` launcher uses the Windows console subsystem.
 3. Open your Python project.
@@ -138,7 +147,7 @@ The runtime log had no SEVERE or ERROR entries after these checks.
 
 ### Current limits
 
-- The supported languages are Python, JavaScript, and TypeScript. Vue and Svelte component files are outside this preview.
+- The supported languages are Python, JavaScript, and TypeScript. Vue and Svelte component files are outside this release.
 - JS/TS support provides declaration navigation. Completion, refactoring, diagnostics, and formatting are outside this feature.
 - JS/TS navigation requires Node.js 22.22.2 or later. The native LSP client does not provide Ctrl+click navigation here; use Ctrl+B.
 - Python navigation depends on static analysis. Dynamic imports and runtime changes can prevent a unique result.
@@ -147,7 +156,7 @@ The runtime log had no SEVERE or ERROR entries after these checks.
 - Python manual shortcut checks covered **Ctrl+B**. Python **Ctrl+click** was not checked separately.
 - Linux, macOS, and performance changes have not been tested for this feature.
 
-### Build the Windows preview
+### Build the Windows package
 
 Check the repository's [build requirements](CONTRIBUTING.md#building-rebased), then clone this fork:
 
@@ -159,7 +168,7 @@ cd rebased
 Run this command in PowerShell from the repository root:
 
 ```powershell
-.\installers.cmd --% -Dintellij.build.target.os=current -Dintellij.build.target.arch=current -Dintellij.build.skip.build.steps=maven_artifacts,windows_exe_installer
+.\installers.cmd --% "-Dintellij.build.target.os=current" "-Dintellij.build.target.arch=current" "-Dintellij.build.skip.build.steps=maven_artifacts,windows_exe_installer"
 ```
 
 On Windows x64, the output is `out/idea-ce/artifacts/rebased.win.zip`.
@@ -179,7 +188,7 @@ See [this youtrack issue](https://youtrack.jetbrains.com/issue/IJPL-72504/Make-g
 ## Installation
 
 The links and package commands in this section install **upstream Rebased**.
-For this fork's navigation features, follow [Build the Windows preview](#build-the-windows-preview) above.
+For this fork's navigation features, use [Download version 1.0.0](#download-version-100) above.
 
 ### Linux
 
