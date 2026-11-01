@@ -12,6 +12,7 @@
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.impl"/>
     <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.diff"/>
     <module name="intellij.platform.editor.ex"/>
     <module name="intellij.platform.editor.ui"/>
     <module name="intellij.platform.execution"/>
@@ -56,6 +57,7 @@
     <serviceViewContributor implementation="com.intellij.platform.lsp.impl.serviceView.LspServiceViewContributor"/>
 
     <postStartupActivity implementation="com.intellij.platform.lsp.impl.platformListeners.LspStartupActivity"/>
+    <diff.DiffExtension implementation="com.intellij.platform.lsp.impl.platformListeners.LspDiffExtension"/>
     <editorFactoryDocumentListener id="LspDocumentListener"
                                    implementation="com.intellij.platform.lsp.impl.platformListeners.LspDocumentListener"/>
     <vfs.asyncListener id="LspFileListener"

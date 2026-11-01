@@ -79,6 +79,8 @@ jvm_library(
         "//platform/testFramework/junit5/codeInsight:codeInsight_test_lib",
         "//platform/core-api:core",
         "//platform/core-api:core_test_lib",
+        "//platform/diff-api:diff",
+        "//platform/diff-api:diff_test_lib",
         "//platform/core-impl",
         "//platform/core-impl:core-impl_test_lib",
         "//platform/analysis-api:analysis",

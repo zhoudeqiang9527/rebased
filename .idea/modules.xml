@@ -1716,6 +1716,8 @@
       <module fileurl="file://$PROJECT_DIR$/python/python-uv/tests/intellij.python.uv.tests.iml" filepath="$PROJECT_DIR$/python/python-uv/tests/intellij.python.uv.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/python/python-venv/intellij.python.venv.iml" filepath="$PROJECT_DIR$/python/python-venv/intellij.python.venv.iml" />
       <module fileurl="file://$PROJECT_DIR$/python/python-venv/intellij.python.venv.tests.iml" filepath="$PROJECT_DIR$/python/python-venv/intellij.python.venv.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/rebased.javascript/intellij.rebased.javascript.iml" filepath="$PROJECT_DIR$/plugins/rebased.javascript/intellij.rebased.javascript.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/rebased.javascript/tests/intellij.rebased.javascript.tests.iml" filepath="$PROJECT_DIR$/plugins/rebased.javascript/tests/intellij.rebased.javascript.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/RegExpSupport/intellij.regexp.iml" filepath="$PROJECT_DIR$/RegExpSupport/intellij.regexp.iml" />
       <module fileurl="file://$PROJECT_DIR$/RegExpSupport/intellij.regexp.tests.iml" filepath="$PROJECT_DIR$/RegExpSupport/intellij.regexp.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/xml/relaxng/intellij.relaxng.iml" filepath="$PROJECT_DIR$/xml/relaxng/intellij.relaxng.iml" />

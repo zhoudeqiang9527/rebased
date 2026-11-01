@@ -8,7 +8,6 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerState
 import com.intellij.platform.lsp.impl.LspClientImpl
@@ -145,7 +144,7 @@ internal class LspDocumentSyncManager(private val client: LspClientImpl) {
     ReadAction
       .nonBlocking<Set<VirtualFile>> {
         val openedAndUnsavedFiles: MutableSet<VirtualFile> = HashSet()
-        for (file in FileEditorManager.getInstance(client.project).openFiles) {
+        for (file in LspOpenedFilesService.getOpenedFiles(client.project)) {
           if (!openedFiles.contains(file) && client.isSupportedFile(file)) {
             openedAndUnsavedFiles.add(file)
           }
@@ -175,12 +174,12 @@ internal class LspDocumentSyncManager(private val client: LspClientImpl) {
   @RequiresBackgroundThread
   @RequiresReadLock
   fun getFilesToClose(): Collection<VirtualFile> {
-    val fileEditorManager = FileEditorManager.getInstance(client.project)
+    val filesInEditors = LspOpenedFilesService.getOpenedFiles(client.project)
     val fileDocumentManager = FileDocumentManager.getInstance()
 
     return openedFiles.filter { file ->
       val originFile = BackedVirtualFile.getOriginFileIfBacked(file)
-      if (fileEditorManager.isFileOpen(originFile)) return@filter false
+      if (originFile in filesInEditors) return@filter false
 
       val cachedDoc = FileDocumentManager.getInstance().getCachedDocument(originFile)
       val isSaved = cachedDoc == null || !fileDocumentManager.isDocumentUnsaved(cachedDoc)

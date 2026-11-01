@@ -69,6 +69,7 @@ open class RebasedProperties(private val communityHomeDir: Path) : JetBrainsProd
     productLayout.bundledPluginModules = REBASED_BUNDLED_PLUGINS + sequenceOf(
       "intellij.idea.customization.plugin",
       "intellij.python.community.plugin",
+      "intellij.rebased.javascript",
       "intellij.toml",
       "intellij.json",
       "intellij.yaml",
@@ -163,6 +164,7 @@ open class RebasedProperties(private val communityHomeDir: Path) : JetBrainsProd
     )
 
     bundleExternalPlugins(context, targetDir)
+    bundleRebasedJavaScriptServer(targetDir, context)
   }
 
   protected open suspend fun bundleExternalPlugins(context: BuildContext, targetDirectory: Path) {}

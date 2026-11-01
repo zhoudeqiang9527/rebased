@@ -27,6 +27,7 @@ internal class LspFileEditorManagerListener : FileEditorManagerListener {
     val project = fileEditorManager.project.takeIf { !it.isDefault } ?: return
     if (!file.isInLocalFileSystem) return
     if (fileEditorManager.isFileOpen(file)) return // the file might be still open in some other editor
+    if (file in LspOpenedFilesService.getDiffFiles(project)) return
     LspInlayApplier.getInstance(project).onFileClosed(file)
     val document = FileDocumentManager.getInstance().getCachedDocument(file) ?: return
     if (FileDocumentManager.getInstance().isDocumentUnsaved(document)) return

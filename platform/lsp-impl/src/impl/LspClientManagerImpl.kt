@@ -10,7 +10,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointListener
 import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -156,7 +155,7 @@ class LspClientManagerImpl internal constructor(private val project: Project, in
         val clients = getClients(providerClass)
         val descriptorsToStart = mutableListOf<LspClientDescriptor>()
 
-        for (file in FileEditorManager.getInstance(project).openFiles) {
+        for (file in LspOpenedFilesService.getOpenedFiles(project)) {
           ProgressManager.checkCanceled()
           if (!file.isInLocalFileSystem) continue
           if (!ProjectFileIndex.getInstance(project).isInContent(file)) continue
@@ -426,7 +425,7 @@ class LspClientManagerImpl internal constructor(private val project: Project, in
     // TODO Some running servers might need to be stopped if they serve roots that don't belong to the project anymore
 
     readAction {
-      val openedFiles = FileEditorManager.getInstance(project).openFiles.filterNotNull()
+      val openedFiles = LspOpenedFilesService.getOpenedFiles(project)
       val unsavedFiles = FileDocumentManager.getInstance().unsavedDocuments.mapNotNull { FileDocumentManager.getInstance().getFile(it) }
       LspOpenedFilesService.getInstance(project).processOpenedFiles(unsavedFiles + openedFiles)
     }

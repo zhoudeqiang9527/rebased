@@ -1416,6 +1416,8 @@ plugins/properties/properties-psi-impl
 plugins/properties/property-tests
 plugins/properties/tests
 plugins/rareJavaRefactorings
+plugins/rebased.javascript
+plugins/rebased.javascript/tests
 plugins/remote-control
 plugins/repository-search/common
 plugins/repository-search/completion

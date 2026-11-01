@@ -2,14 +2,17 @@ package com.intellij.platform.lsp.impl.documentSync
 
 import com.intellij.ide.trustedProjects.TrustedFiles
 import com.intellij.ide.trustedProjects.TrustedProjects
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspClientDescriptor
@@ -20,6 +23,7 @@ import com.intellij.platform.lsp.impl.LspClientManagerImpl
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.containers.MultiMap
 import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @see processOpenedFiles
@@ -29,6 +33,28 @@ import java.util.Collections
 internal class LspOpenedFilesService(private val project: Project) {
   companion object {
     fun getInstance(project: Project): LspOpenedFilesService = project.service()
+
+    fun getOpenedFiles(project: Project): Set<VirtualFile> = buildSet {
+      addAll(FileEditorManager.getInstance(project).openFiles)
+      addAll(getDiffFiles(project))
+    }
+
+    fun getDiffFiles(project: Project): Set<VirtualFile> = getInstance(project).diffFiles.values.asSequence()
+      .flatten()
+      .filter { it.isValid && TrustedFiles.isTrusted(it, project) }
+      .toSet()
+  }
+
+  private val diffFiles = ConcurrentHashMap<Disposable, Set<VirtualFile>>()
+
+  fun trackDiffFiles(files: Set<VirtualFile>, viewer: Disposable) {
+    if (files.isEmpty()) return
+    diffFiles[viewer] = files
+    Disposer.register(viewer, Disposable {
+      diffFiles.remove(viewer)
+      if (!project.isDisposed) scheduleClosingFilesThatAreNotOfInterest()
+    })
+    processOpenedFiles(files)
   }
 
   // a linked map keeps the report order, so a batch processes the files in a predictable order;

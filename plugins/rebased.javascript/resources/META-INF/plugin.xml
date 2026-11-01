@@ -1,0 +1,25 @@
+<idea-plugin>
+  <id>org.rebased.javascript</id>
+  <name>Rebased JavaScript and TypeScript Navigation</name>
+  <vendor>Rebased contributors</vendor>
+  <description>Navigate to JavaScript and TypeScript definitions with the TypeScript language server.</description>
+  <dependencies>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.execution"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.lsp"/>
+    <module name="intellij.platform.lsp.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.util.ui"/>
+  </dependencies>
+  <resource-bundle>messages.RebasedJavaScriptBundle</resource-bundle>
+  <content namespace="jetbrains"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <platform.lsp.integrationProvider implementation="org.rebased.javascript.JavaScriptLspIntegrationProvider"/>
+    <projectConfigurable id="rebased.javascript" parentId="language"
+                         bundle="messages.RebasedJavaScriptBundle" key="settings.name"
+                         instance="org.rebased.javascript.JavaScriptConfigurable"/>
+  </extensions>
+</idea-plugin>

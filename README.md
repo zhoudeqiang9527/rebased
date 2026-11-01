@@ -1,24 +1,26 @@
 <div align="center">
   <img src="./community-resources/resources/rebased.svg" width="100" height="100" />  
   <h1>Rebased</h1>
-  <p>A Git client based on the IntelliJ Platform, with Python code navigation in this fork.</p>
+  <p>A Git client based on the IntelliJ Platform, with Python, JavaScript, and TypeScript navigation in this fork.</p>
 </div>
 
 ![](screenshot.png)
 
-## This fork: Python code navigation
+## This fork: code navigation for Git reviews
 
 This fork builds on [DetachHead/rebased](https://github.com/DetachHead/rebased).
-It adds Python declaration navigation to help you understand code while you review Git changes.
+It adds Python, JavaScript, and TypeScript declaration navigation to help you understand code while you review Git changes.
 You can follow a function call to its definition from a source file or a workspace diff.
-The first version focuses on Python and has been checked on Windows x64.
+The preview targets Windows x64.
 
 The feature uses the PythonCore plugin from the same IntelliJ Platform revision as Rebased.
 It resolves references through the platform's Python analysis and navigation.
+JavaScript and TypeScript use the platform LSP client with a bundled TypeScript language server.
+Java support is not included.
 Rebased still provides the Git log, change review, staging, and commit interface.
 
 > [!IMPORTANT]
-> Build this fork to use Python navigation. The installation links below point to upstream Rebased releases.
+> Build this fork to use code navigation. The installation links below point to upstream Rebased releases.
 > Those upstream downloads do not include this feature.
 > The Windows ZIP has been built and checked locally. This fork has not published that preview to GitHub Releases.
 
@@ -27,8 +29,11 @@ Rebased still provides the Git log, change review, staging, and commit interface
 | Area | Change in this fork | What you can do |
 | --- | --- | --- |
 | Python support | Bundle PythonCore and its required plugins. | Resolve Python declarations through the platform's Python analysis. |
+| JavaScript and TypeScript | Bundle a language server and a fallback TypeScript engine. | Follow functions, methods, imports, and project path aliases with Ctrl+B. |
+| JS/TS setup | Start the language server when a supported source file or workspace diff opens. | Use Node.js from PATH, or select its executable in project settings. |
 | Source editors | Enable Python navigation with a configured interpreter and project indexes. | Follow local functions, imported aliases, methods, and standard library calls. |
 | Unified diffs | Map a diff position to the actual workspace file before navigation. | Follow a call from a supported context line or added line in a unified diff. |
+| JS/TS diffs | Start and retain language services for workspace documents shown in diffs. | Navigate from a diff without opening a source tab first. |
 | Project setup | Restore Python SDK configuration and the source root action. | Select a virtual environment and mark `src/` as a source root. |
 | Windows environments | Use a batch activation script with the environment reader that runs `cmd.exe`. | Update the interpreter environment without opening a PowerShell script in an editor. |
 | Product integration | Restore required Facet services and module initialization. Handle the absent plugin advertiser service. | Keep interpreter setup, package updates, and project reopening working in Rebased. |
@@ -37,7 +42,23 @@ The unified diff adapter checks the file, text, and line mapping before it navig
 It rejects historical content and stale mappings instead of treating them as current source code.
 The development launcher also supports the standalone community checkout root.
 
-### Quick start on Windows
+### JavaScript and TypeScript quick start
+
+1. Build this fork and extract the Windows ZIP. Start `bin/rebased64.exe`.
+2. Install Node.js **22.22.2 or later** and put it on PATH. Node.js 24 also works.
+3. Open your repository and a source file or workspace diff.
+   Supported extensions are `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.mts`, `.cjs`, and `.cts`.
+4. Wait for the language server to start. Put the caret on a function call and press **Ctrl+B**.
+   Press **Ctrl+Alt+Left** to return with the default Windows keymap.
+
+The server reads your `tsconfig.json` or `jsconfig.json` and uses the project's TypeScript version when available.
+The ZIP includes a fallback TypeScript engine. A global npm package installation is not required.
+If Node.js is outside PATH, select it in **Settings > Languages & Frameworks > JavaScript and TypeScript**.
+The same settings page lets you disable the server for a project.
+
+See [JavaScript and TypeScript navigation](JAVASCRIPT_NAVIGATION.md) for the supported cases, setup, and limits.
+
+### Python quick start on Windows
 
 1. Build this fork with the command below and extract `rebased.win.zip`.
 2. Start `bin/rebased64.exe`. This GUI launcher does not create a console window.
@@ -63,15 +84,22 @@ message = welcome("Ada")  # Put the caret on welcome and press Ctrl+B.
 ```
 
 The same call can be followed from the current file side of a side-by-side diff.
-In a unified diff, the adapter first locates the call in the workspace file, then invokes Python navigation.
+In a unified diff, the adapter first locates the call in the workspace file, then invokes the language navigation action.
 
 ### What we verified
 
-The Windows x64 preview passed **195 automated tests**, with no failures or skipped tests.
-These tests cover Python navigation, cross-file resolution, relative imports, diff mapping, environment activation, and Facet behavior.
-The detailed test counts are in [Python navigation](PYTHON_NAVIGATION.md#validation).
+The JS/TS change passed **99 automated tests**, with no failures or skipped tests.
+These include 19 JS/TS tests, 31 LSP tests, 6 diff mapping tests, and 43 Python navigation tests.
+The JS/TS tests start the actual language server and invoke Go to Declaration.
+Manual checks in the Windows ZIP covered JavaScript side-by-side diffs, TypeScript unified diffs, and navigation back.
+These checks did not require an open source tab before the jump.
+See [JS/TS validation](JAVASCRIPT_NAVIGATION.md#validation) for the covered cases and check limits.
 
-Manual checks covered local functions, imported aliases, instance methods, standard library calls, and imports from `src/`.
+The earlier Python preview passed **195 automated tests**, with no failures or skipped tests.
+Those tests cover Python resolution, relative imports, diff mapping, environment activation, and Facet behavior.
+The detailed counts are in [Python navigation](PYTHON_NAVIGATION.md#validation).
+
+Python manual checks covered local functions, imported aliases, instance methods, standard library calls, and imports from `src/`.
 They also covered unified and side-by-side diffs, external file updates, and navigation back.
 The final Windows ZIP was started with an empty index directory.
 Interpreter and source root settings survived reopening, and navigation worked after indexing.
@@ -79,11 +107,13 @@ The runtime log had no SEVERE or ERROR entries after these checks.
 
 ### Current limits
 
-- This first version focuses on Python. Other languages have not been validated for declaration navigation.
+- The supported languages are Python, JavaScript, and TypeScript. Vue and Svelte component files are outside this preview.
+- JS/TS support provides declaration navigation. Completion, refactoring, diagnostics, and formatting are outside this feature.
+- JS/TS navigation requires Node.js 22.22.2 or later. The native LSP client does not provide Ctrl+click navigation here; use Ctrl+B.
 - Python navigation depends on static analysis. Dynamic imports and runtime changes can prevent a unique result.
 - Unified diff navigation requires a matching workspace file. Historical revision navigation is outside this version's scope.
 - Returning after a jump from a unified diff opens the call in the source editor, rather than the diff tab.
-- Manual shortcut checks covered **Ctrl+B**. The action registers platform mouse shortcuts, but **Ctrl+click** was not checked separately.
+- Python manual shortcut checks covered **Ctrl+B**. Python **Ctrl+click** was not checked separately.
 - Linux, macOS, and performance changes have not been tested for this feature.
 
 ### Build the Windows preview
@@ -102,23 +132,23 @@ Run this command in PowerShell from the repository root:
 ```
 
 On Windows x64, the output is `out/idea-ce/artifacts/rebased.win.zip`.
-The ZIP includes JBR. You need an existing Python interpreter for your Python project.
+The ZIP includes JBR and the JS/TS language server. Use an existing Python interpreter for Python, or Node.js for JS/TS.
 This command skips Maven artifacts and the EXE installer.
 
-See [Python navigation](PYTHON_NAVIGATION.md) for more implementation details and validation limits.
+See [Python navigation](PYTHON_NAVIGATION.md) and [JS/TS navigation](JAVASCRIPT_NAVIGATION.md) for implementation details and validation limits.
 
 ## Motivation
 
 Rebased is an open-source remake of the short-lived [jetbrains git client](https://youtrack.jetbrains.com/issue/IJPL-72504/Make-git-client-a-standalone-app#focus=Comments-27-12868395.0-0).
 Upstream Rebased removes most bundled IDE plugins and keeps the Git integration, with additional UI tweaks.
-This fork adds PythonCore and the platform services needed for Python navigation.
+This fork adds PythonCore, a JS/TS language server, and the platform services needed for code navigation.
 
 See [this youtrack issue](https://youtrack.jetbrains.com/issue/IJPL-72504/Make-git-client-a-standalone-app) for the many reasons people have been requesting this for almost a decade. At the time of writing, it's the #3 most upvoted open issue on YouTrack.
 
 ## Installation
 
 The links and package commands in this section install **upstream Rebased**.
-For this fork's Python feature, follow [Build the Windows preview](#build-the-windows-preview) above.
+For this fork's navigation features, follow [Build the Windows preview](#build-the-windows-preview) above.
 
 ### Linux
 
@@ -231,6 +261,7 @@ One of the goals of Rebased is to prevent users from having to install bloated p
 ### Compatibility disclaimer
 
 This fork bundles PythonCore and restores the platform services required for the Python scenarios described above.
+It also includes a JS/TS navigation plugin that uses the platform LSP client.
 The remaining notes describe upstream Rebased's plugin policy and the limits of other marketplace plugins.
 
 While installing plugins from the marketplace is supported, note that many of the core components otherwise present in every JetBrains IDE are disabled in Rebased. This means some plugins may not work properly (or at all) if they depend on such components.
