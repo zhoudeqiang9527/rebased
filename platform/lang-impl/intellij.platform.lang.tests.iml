@@ -123,4 +123,5 @@
     <orderEntry type="module" module-name="intellij.libraries.junit5.params" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.bazel.runfiles" scope="TEST" />
   </component>
+  <component name="TestModuleProperties" production-module="intellij.platform.lang.impl" />
 </module>

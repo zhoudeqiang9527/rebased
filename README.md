@@ -34,6 +34,8 @@ Rebased still provides the Git log, change review, staging, and commit interface
 | Source editors | Enable Python navigation with a configured interpreter and project indexes. | Follow local functions, imported aliases, methods, and standard library calls. |
 | Unified diffs | Map a diff position to the actual workspace file before navigation. | Follow a call from a supported context line or added line in a unified diff. |
 | JS/TS diffs | Start and retain language services for workspace documents shown in diffs. | Navigate from a diff without opening a source tab first. |
+| Open source from a diff | Add the existing source action to the diff editor menu. | Right-click and select **Jump to Source**, or press **F4**, to edit the file at the mapped position. |
+| Project speed search | Search project files when the visible tree has no match. | Find a file inside a collapsed directory, expand its path, and select the file. |
 | Project setup | Restore Python SDK configuration and the source root action. | Select a virtual environment and mark `src/` as a source root. |
 | Windows environments | Use a batch activation script with the environment reader that runs `cmd.exe`. | Update the interpreter environment without opening a PowerShell script in an editor. |
 | Product integration | Restore required Facet services and module initialization. Handle the absent plugin advertiser service. | Keep interpreter setup, package updates, and project reopening working in Rebased. |
@@ -41,6 +43,29 @@ Rebased still provides the Git log, change review, staging, and commit interface
 The unified diff adapter checks the file, text, and line mapping before it navigates.
 It rejects historical content and stale mappings instead of treating them as current source code.
 The development launcher also supports the standalone community checkout root.
+
+### Open the source file from a diff
+
+Put the caret on the line in the diff that you want to edit.
+Right-click the diff editor and select **Jump to Source**. You can also press **F4** with the default Windows keymap.
+Rebased opens the source editor and uses the diff's line mapping to place the caret.
+This action opens the file. Use **Ctrl+B** when you want to follow a function to its declaration.
+The action requires a source file that the diff can navigate to.
+
+### Find files inside collapsed directories
+
+Focus the **Project** tree and type a file name, such as `time.js`.
+When the visible nodes have no match, Rebased searches the project content in the background.
+It expands the matching path and selects `utils/time.js`, rather than stopping on `utils`.
+You can then press **Enter** to open the selected file.
+
+The search ignores case and supports partial names.
+It prefers an exact file name when it searches collapsed directories.
+It searches project content and skips excluded directories and external libraries.
+It does not require the file search index.
+Changing the query or closing the search cancels the previous result's selection.
+The existing search keys and visible-node matching stay available.
+The background fallback selects the first matching file. It does not build a list of all hidden matches.
 
 ### JavaScript and TypeScript quick start
 
@@ -87,6 +112,12 @@ The same call can be followed from the current file side of a side-by-side diff.
 In a unified diff, the adapter first locates the call in the workspace file, then invokes the language navigation action.
 
 ### What we verified
+
+The project search change passed **6 automated tests**, with no failures or skipped tests.
+They cover exact names, case, partial names, missing files, expansion of a collapsed path, and cancellation before selection.
+The **6 diff mapping tests** also passed after the source menu change.
+In the Windows build, we typed `time.js` in a collapsed Project tree and confirmed selection of `utils/time.js`.
+We also opened the source at the mapped line from a unified diff menu and with **F4** in a side-by-side diff.
 
 The JS/TS change passed **99 automated tests**, with no failures or skipped tests.
 These include 19 JS/TS tests, 31 LSP tests, 6 diff mapping tests, and 43 Python navigation tests.

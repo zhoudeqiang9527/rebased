@@ -45,6 +45,8 @@
     <action id="ToggleThreeSideInBlankDiffWindow" class="com.intellij.diff.actions.BlankToggleThreeSideModeAction"/>
     <action id="SwapThreeWayColorModeInDiffWindow" class="com.intellij.diff.actions.impl.SwapThreeWayColorModeAction"/>
     <group id="Diff.EditorPopupMenu">
+      <reference ref="Diff.OpenInEditor"/>
+      <separator/>
       <reference ref="CompareClipboardWithSelection"/>
     </group>
     <group id="Diff.ViewerPopupMenu"/>
