@@ -71,6 +71,12 @@ Alternatively you can download the `.dmg` manually:
 |Apple Silicon (aarch64)|[Download](https://github.com/DetachHead/rebased/releases/latest/download/rebased-aarch64.dmg)|
 |Intel (x86_64)|[Download](https://github.com/DetachHead/rebased/releases/latest/download/rebased.dmg)|
 
+## Python navigation in this fork
+
+This fork adds Python declaration navigation in source editors and workspace diffs.
+See [Python navigation](PYTHON_NAVIGATION.md) for setup, build steps, validation, and limits.
+Build this fork to use the feature. The upstream downloads above do not include it.
+
 ## Exclusive Features
 
 In addition to all the git-related features from [IntelliJ IDEA Community Edition](https://github.com/jetbrains/intellij-community), Rebased has some additional features which aren't available in any of the official JetBrains IDEs.

@@ -86,9 +86,9 @@ internal class ActivatableEnvironmentService {
    */
   @OptIn(LowLevelLocalMachineAccess::class)
   private fun readActivationEnvironment(environment: PythonEnvironment): Map<String, String> {
-    val shellType = systemDefaultShell?.type ?: Shell.Type.UNKNOWN
+    val isWindows = environment.pythonBinaryPath.getEelDescriptor().osFamily == EelOsFamily.Windows
+    val shellType = if (isWindows) Shell.Type.UNKNOWN else systemDefaultShell?.type ?: Shell.Type.UNKNOWN
     val script = environment.activationScript(shellType) ?: return emptyMap()
-    val isWindows = script.scriptPath.getEelDescriptor().osFamily == EelOsFamily.Windows
 
     fun readShellEnv(sourced: ActivationScript?): Map<String, String> {
       val command = if (isWindows) {

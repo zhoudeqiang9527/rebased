@@ -68,6 +68,12 @@ open class RebasedProperties(private val communityHomeDir: Path) : JetBrainsProd
 
     productLayout.bundledPluginModules = REBASED_BUNDLED_PLUGINS + sequenceOf(
       "intellij.idea.customization.plugin",
+      "intellij.python.community.plugin",
+      "intellij.toml",
+      "intellij.json",
+      "intellij.yaml",
+      "intellij.platform.testRunner.plugin",
+      "intellij.jcef.plugin",
       // from upstream:
       //"intellij.javaFX.community"
     )
@@ -139,6 +145,10 @@ open class RebasedProperties(private val communityHomeDir: Path) : JetBrainsProd
 
   override fun getProductContentDescriptor(): ProductModulesContentSpec = productModules {
     include(intellijCommunityBaseFragment(platformPrefix))
+    module("intellij.platform.remoteServers.impl")
+    alias("com.intellij.modules.python-core-capable")
+    alias("com.intellij.modules.python-in-non-pycharm-ide-capable")
+    alias("com.intellij.modules.python-in-mini-ide-capable")
   }
 
   override suspend fun copyAdditionalFiles(targetDir: Path, context: BuildContext) {

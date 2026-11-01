@@ -59,6 +59,7 @@
     </action>
 
     <group id="MarkContentRootGroup">
+      <action id="MarkSourceRoot" class="com.intellij.ide.projectView.actions.MarkJavaSourceRootAction"/>
       <action id="MarkExcludeRoot" class="com.intellij.ide.projectView.actions.MarkExcludeRootAction"/>
       <action id="MarkAsContentRoot" class="com.intellij.ide.projectView.actions.MarkAsContentRootAction"/>
       <action id="UnmarkRoot" class="com.intellij.ide.projectView.actions.UnmarkRootAction"/>

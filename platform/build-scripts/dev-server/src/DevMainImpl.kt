@@ -4,6 +4,7 @@ package org.jetbrains.intellij.build.devServer
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.platform.buildData.productInfo.CustomCommandLaunchData
+import org.jetbrains.intellij.build.BuildPaths
 import org.jetbrains.intellij.build.VmProperties
 import org.jetbrains.intellij.build.dev.BuildRequest
 import org.jetbrains.intellij.build.dev.buildProductInProcess
@@ -59,8 +60,7 @@ fun buildDevMain(rawArgs: Array<String>): java.util.AbstractMap.SimpleImmutableE
 }
 
 private fun buildDevImpl(rawArgs: Array<String>): BuildDevInfo {
-  @Suppress("TestOnlyProblems")
-  val ideaProjectRoot = requireNotNull(PathManager.getHomeDirFor(PathManager::class.java)) { "Cannot find home directory" }
+  val ideaProjectRoot = BuildPaths.MAYBE_ULTIMATE_HOME ?: BuildPaths.COMMUNITY_ROOT.communityRoot
   System.setProperty("idea.dev.project.root", ideaProjectRoot.invariantSeparatorsPathString)
   val additionalClassPaths = System.getProperty("idea.dev.additional.classpath")?.splitToSequence(',')?.map { Path.of(it) }?.toList() ?: emptyList()
 

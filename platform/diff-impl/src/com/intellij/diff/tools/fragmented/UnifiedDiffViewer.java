@@ -205,6 +205,7 @@ public class UnifiedDiffViewer extends ListenerDiffViewerBase implements EditorD
     myTextDiffProvider = DiffUtil.createNoIgnoreTextDiffProvider(getProject(), getRequest(), getTextSettings(), this::rediff, this);
 
     new MyOpenInEditorWithMouseAction().install(getEditors());
+    UnifiedDiffGoToDeclarationAction.register(this);
 
     TextDiffViewerUtil.checkDifferentDocuments(myRequest);
 

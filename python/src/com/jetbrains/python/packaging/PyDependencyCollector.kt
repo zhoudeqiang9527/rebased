@@ -28,6 +28,6 @@ internal class PyDependencyCollector : DependencyCollector {
 
 private class PyDependencyCollectorListener(private val project: Project) : PythonPackageManagementListener {
   override fun packagesChanged(sdk: Sdk) {
-    PluginAdvertiserService.getInstance(project).rescanDependencies()
+    project.getService(PluginAdvertiserService::class.java)?.rescanDependencies()
   }
 }
