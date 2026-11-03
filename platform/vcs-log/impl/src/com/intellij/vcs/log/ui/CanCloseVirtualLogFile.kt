@@ -16,4 +16,6 @@ class CanCloseVirtualLogFile: VirtualFilePreCloseCheck {
   override fun canCloseFile(file: VirtualFile): Boolean {
     return file !is DefaultVcsLogFile || !file.isFirstLogFile || !service<VcsLogApplicationSettings>()[CommonUiProperties.SHOW_IN_EDITOR]
   }
+
+  override fun filterFilesToClose(files: Collection<VirtualFile>): Collection<VirtualFile> = files.filter(::canCloseFile)
 }
