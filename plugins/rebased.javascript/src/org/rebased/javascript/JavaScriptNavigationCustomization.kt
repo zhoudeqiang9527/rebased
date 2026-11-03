@@ -12,7 +12,6 @@ import com.intellij.platform.lsp.api.customization.LspDocumentColorDisabled
 import com.intellij.platform.lsp.api.customization.LspDocumentHighlightsDisabled
 import com.intellij.platform.lsp.api.customization.LspDocumentLinkDisabled
 import com.intellij.platform.lsp.api.customization.LspDocumentSymbolDisabled
-import com.intellij.platform.lsp.api.customization.LspFindReferencesDisabled
 import com.intellij.platform.lsp.api.customization.LspFoldingRangeDisabled
 import com.intellij.platform.lsp.api.customization.LspFormattingDisabled
 import com.intellij.platform.lsp.api.customization.LspHoverDisabled
@@ -33,7 +32,6 @@ internal class JavaScriptNavigationCustomization : LspCustomization() {
   override val codeActionsCustomizer = LspCodeActionsDisabled
   override val commandsCustomizer = LspCommandsDisabled
   override val formattingCustomizer = LspFormattingDisabled
-  override val findReferencesCustomizer = LspFindReferencesDisabled
   override val optimizeImportsCustomizer = LspOptimizeImportsDisabled
   override val documentColorCustomizer = LspDocumentColorDisabled
   override val documentLinkCustomizer = LspDocumentLinkDisabled

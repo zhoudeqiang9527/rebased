@@ -33,6 +33,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.testFramework.junit5.fixture.tempPathFixture
+import com.intellij.usages.rules.UsageInFile
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -57,6 +58,27 @@ internal class JavaScriptNavigationTest {
 
   private val fixture by codeInsightFixture(projectFixture, tempDir)
   private val project get() = projectFixture.get()
+
+  @Test
+  fun `finds calls across files including aliased imports`(): Unit = timeoutRunBlocking(timeout = 45.seconds) {
+    val declaration = "export function greet() { return 'hello'; }\n"
+    val caller = "import { greet as welcome } from './utils';\nwelcome();\nwelcome();\n"
+    val source = withContext(Dispatchers.EDT) {
+      fixture.addFileToProject("usages/tsconfig.json", """{"compilerOptions":{"module":"nodenext","moduleResolution":"nodenext"}}""")
+      fixture.addFileToProject("usages/main.ts", caller)
+      val file = fixture.addFileToProject("usages/utils.ts", declaration).virtualFile
+      fixture.configureFromExistingVirtualFile(file)
+      fixture.editor.caretModel.moveToOffset(declaration.indexOf("greet"))
+      file
+    }
+    awaitFileOpenedByLspServer(project, source)
+    val usages = withContext(Dispatchers.EDT) { fixture.testFindUsagesUsingAction() }
+    val callerOffsets = usages.filterIsInstance<UsageInFile>()
+      .filter { it.file?.name == "main.ts" }
+      .map { it.navigationOffset }
+    assertTrue(callerOffsets.contains(caller.indexOf("welcome();")), "First call was not found: $callerOffsets")
+    assertTrue(callerOffsets.contains(caller.lastIndexOf("welcome();")), "Second call was not found: $callerOffsets")
+  }
 
   @ParameterizedTest
   @ValueSource(strings = ["js", "ts", "jsx", "tsx", "mjs", "mts", "cjs", "cts"])

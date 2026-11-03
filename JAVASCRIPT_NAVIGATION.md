@@ -1,6 +1,6 @@
 # JavaScript and TypeScript navigation
 
-This fork uses the IntelliJ Platform LSP client and the TypeScript language server to resolve declarations.
+This fork uses the IntelliJ Platform LSP client and the TypeScript language server to resolve declarations and find usages.
 It keeps the existing TextMate syntax highlighting.
 It does not bundle a JavaScript IDE plugin or add Java support.
 
@@ -11,6 +11,9 @@ It does not bundle a JavaScript IDE plugin or add Java support.
 3. Open a supported source file or workspace diff. The language server starts in a trusted project.
 4. Wait for the language server to start. Put the caret on a call and press **Ctrl+B** with the default Windows keymap.
 5. Press **Ctrl+Alt+Left** to return.
+
+To find references, put the caret on a function or another symbol and choose **Find Usages** from the editor context menu
+(or press **Alt+F7** with the default Windows keymap). The results include references across supported project files.
 
 Supported extensions are `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.mts`, `.cjs`, and `.cts`.
 The server reads the project's `tsconfig.json` or `jsconfig.json`.
@@ -61,7 +64,7 @@ Historical documents do not start a server or replace workspace content.
 ## Limits
 
 - Use **Ctrl+B**. The native LSP client does not provide Ctrl+click navigation in this checkout.
-- Dynamic JavaScript can lack a unique static definition.
+- Dynamic JavaScript can lack a unique static definition or references that can be determined statically.
 - Vue and Svelte component files need a separate language server and are not supported here.
 - This feature does not provide a full JavaScript IDE.
 - Linux and macOS runtime behavior has not been checked.

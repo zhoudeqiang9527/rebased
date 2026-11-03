@@ -71,6 +71,8 @@ jvm_library(
         "//platform/lsp-impl:lsp-impl_test_lib",
         "//platform/lsp/testFramework",
         "//platform/lsp/testFramework:testFramework_test_lib",
+        "//platform/usageView",
+        "//platform/usageView:usageView_test_lib",
         "//platform/testFramework",
         "//platform/testFramework:testFramework_test_lib",
         "//platform/testFramework/junit5",
